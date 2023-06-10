@@ -55,6 +55,7 @@ build/shared/Galileo*.zip
 build/shared/WiFi101-Updater-ArduinoIDE-Plugin*.zip
 test-bin
 *.iml
+.vscode
 .idea
 .DS_Store
 .directory
