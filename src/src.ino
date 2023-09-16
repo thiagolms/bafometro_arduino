@@ -1,3 +1,4 @@
+#include <ArduinoJson.h>
 #include <SD.h>
 
 
@@ -30,8 +31,10 @@ void salvarDados(float sensorValue)
   dados = SD.open("dados.txt", FILE_WRITE);
   if (dados)
   {
-    dados.print("Valor do sensor: ");
-    dados.println(sensorValue);
+    DynamicJsonDocument jsonDoc(128);
+    jsonDoc["valor"] = sensorValue;
+    serializeJson(jsonDoc, dados);
+    dados.println();
     dados.close();
   }
 }
@@ -60,19 +63,19 @@ void loop()
   // Serial.print("Valor do sensor: ");
   // Serial.println(sensorValue);
 
-  if (sensorValue >= 600)
+  if (sensorValue >= 400)
   {
     digitalWrite(greenLedPin, LOW);
     digitalWrite(redLedPin, HIGH);
     digitalWrite(yellowLedPin, LOW);
   }
-  else if (sensorValue >= 400)
+  else if (sensorValue >= 200)
   {
     digitalWrite(greenLedPin, LOW);
     digitalWrite(redLedPin, LOW);
     digitalWrite(yellowLedPin, HIGH);
   }
-  else if (sensorValue > 300 && sensorValue <= 350)
+  else if (sensorValue > 150 && sensorValue <= 195)
   {
     digitalWrite(greenLedPin, HIGH);
     digitalWrite(redLedPin, LOW);
