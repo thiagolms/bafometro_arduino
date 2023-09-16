@@ -1,8 +1,13 @@
+#include <SD.h>
+
 
 const float sensorPin = A0;
 const int redLedPin = 5;
 const int greenLedPin = 6;
 const int yellowLedPin = 7;
+const int chipSelect = 10;
+
+File dados;
 
 void setup()
 {
@@ -12,13 +17,48 @@ void setup()
   Serial.begin(9600);
   Serial.print("Sensor aquecendo\n");
   delay(10000);
+
+  if (!SD.begin(chipSelect))
+  {
+    Serial.println("Falha na inicialização do cartão");
+    return;
+  }
+}
+
+void salvarDados(float sensorValue)
+{
+  dados = SD.open("dados.txt", FILE_WRITE);
+  if (dados)
+  {
+    dados.print("Valor do sensor: ");
+    dados.println(sensorValue);
+    dados.close();
+  }
+}
+
+void lerDados()
+{
+  dados = SD.open("dados.txt");
+  if (dados)
+  {
+    Serial.println("Conteúdo de dados.txt:");
+    while (dados.available())
+    {
+      Serial.write(dados.read());
+    }
+    dados.close();
+  }
+  else
+  {
+    Serial.println("Erro ao abrir dados.txt para leitura.");
+  }
 }
 
 void loop()
 {
   float sensorValue = analogRead(sensorPin);
-  Serial.print("Valor do sensor: ");
-  Serial.println(sensorValue);
+  // Serial.print("Valor do sensor: ");
+  // Serial.println(sensorValue);
 
   if (sensorValue >= 600)
   {
@@ -45,5 +85,9 @@ void loop()
     digitalWrite(yellowLedPin, LOW);
   }
 
-  delay(1000);
+  salvarDados(sensorValue);
+
+  delay(10000);
+
+  lerDados();
 }
