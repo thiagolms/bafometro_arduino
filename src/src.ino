@@ -7,6 +7,8 @@ const float sensorPin = A0;
 const int chipSelect = 10;
 LiquidCrystal_I2C lcd(0x27,16,2);
 File dados;
+int pushButton = 2;
+
 
 void setup()
 {
@@ -56,13 +58,14 @@ void lerDados()
   }
 }
 
-void loop()
+void medicao()
 {
   float sensorValue = analogRead(sensorPin);
   // Serial.print("Valor do sensor: ");
   // Serial.println(sensorValue);
   lcd.setCursor(0, 0); //coluna 0 linha 0
   lcd.print("Medindo...");
+  delay(5000)
   
   if (sensorValue >= 600)
   {
@@ -88,5 +91,13 @@ void loop()
   salvarDados(sensorValue);
 
   delay(10000);
-  lerDados();
+  //lerDados();
+}
+
+void loop()
+{
+  if (digitalRead(pushButton) == LOW)
+    {
+      medicao();
+    }
 }
