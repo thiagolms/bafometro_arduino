@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 #include <SD.h>
-#include <Wire.h>;
-#include <LiquidCrystal_I2C.h>;
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
 const float sensorPin = A0;
 const int chipSelect = 10;
@@ -66,7 +66,7 @@ void medicao()
   lcd.setCursor(0, 0); //coluna 0 linha 0
   lcd.print("Medindo...");
   delay(5000)
-  
+
   if (sensorValue >= 600)
   {
 	lcd.setCursor(0, 0); //coluna 0 linha 0
@@ -96,7 +96,7 @@ void medicao()
 
 void loop()
 {
-  if (digitalRead(pushButton) == LOW)
+  if (digitalRead(pushButton) == HIGH)
     {
       medicao();
     }
