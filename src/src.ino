@@ -8,6 +8,8 @@ const int chipSelect = 10;
 LiquidCrystal_I2C lcd(0x27,16,2);
 File dados;
 int pushButton = 2;
+bool estadoBotao = false;
+
 
 
 void setup()
@@ -18,7 +20,8 @@ void setup()
   Serial.print("Sensor aquecendo\n");
   lcd.setCursor(0, 0); //coluna 0 linha 0
   lcd.print("Aquecendo...");
-  delay(2000);
+  delay(5000);
+  lcd.clear();
 
   if (!SD.begin(chipSelect))
   {
@@ -60,44 +63,79 @@ void lerDados()
 
 void medicao()
 {
+  lcd.clear();
+  lcd.setCursor(0, 0); //coluna 0 linha 0
+  lcd.print("Aproxime o ");
+  lcd.setCursor(0, 1); //coluna 0 linha 0
+  lcd.print("sensor");
+  delay(3000);
+  lcd.clear();
   float sensorValue = analogRead(sensorPin);
-  // Serial.print("Valor do sensor: ");
-  // Serial.println(sensorValue);
+  Serial.print("Valor do sensor: ");
+  Serial.println(sensorValue);
   lcd.setCursor(0, 0); //coluna 0 linha 0
   lcd.print("Medindo...");
-  delay(5000)
+  delay(5000);
+  lcd.clear();
 
   if (sensorValue >= 600)
   {
 	lcd.setCursor(0, 0); //coluna 0 linha 0
-	lcd.print("Ta preso!");
+  lcd.print("Percentual de ");
+  lcd.setCursor(0, 1); //coluna 0 linha 0
+  lcd.print("alcool: elevado");
+  delay(5000);
+  lcd.clear();
+  
   }
   else if (sensorValue >= 400)
   {
   lcd.setCursor(0, 0); //coluna 0 linha 0
-	lcd.print("Bebeu demais!!");
+	lcd.print("Percentual de ");
+  lcd.setCursor(0, 1); //coluna 0 linha 0
+  lcd.print("alcool: medio");
+  delay(5000);
+  lcd.clear();
   }
   else if (sensorValue > 300 && sensorValue <= 350)
   {
   lcd.setCursor(0, 0); //coluna 0 linha 0
-	lcd.print("Tomou umas");
+  lcd.print("Percentual de ");
+  lcd.setCursor(0, 1); //coluna 0 linha 0
+  lcd.print("alcool: baixo");
+  delay(5000);
+  lcd.clear();
   }
   else
   {
 	lcd.setCursor(0, 0); //coluna 0 linha 0
-	lcd.print("Nada de alcool");
+  lcd.print("Nada de alcool!!");
+  delay(5000);
+  lcd.clear();
   }
 
   salvarDados(sensorValue);
-
+  
+  lcd.setCursor(0, 0); //coluna 0 linha 0
+  lcd.print("Salvando...");
   delay(10000);
+  lcd.clear();
   //lerDados();
 }
 
 void loop()
 {
+  if (digitalRead(pushButton) == LOW && !estadoBotao) // Verifica se o botão foi pressionado (LOW) e não está pressionado antes
+  {
+    estadoBotao = true; // Define a flag para evitar chamadas repetidas
+    medicao();
+  }
+
   if (digitalRead(pushButton) == HIGH)
-    {
-      medicao();
-    }
+  {
+    estadoBotao = false; // Quando o botão é solto, redefina a flag
+    lcd.setCursor(0, 0); //coluna 0 linha 0
+    lcd.print("Pronto para uso");
+    
+  }
 }
